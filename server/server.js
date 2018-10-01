@@ -1,4 +1,5 @@
-require('./config/config');
+
+// require('./config/config');
 
  const _ = require('lodash');
 const express = require('express');
@@ -12,10 +13,11 @@ var {authenticate} = require('./middleware/authenticate');
 
 
 var app = express();
-const port = process.env.PORT;
+const port = process.env.PORT || 3000;
 
 app.use(bodyParser.json());
 
+// POST todos
 app.post('/todos', (req, res) => {
   var todo = new Todo({
     text: req.body.text
@@ -28,6 +30,7 @@ app.post('/todos', (req, res) => {
   });
 });
 
+//GET todos all
 app.get('/todos', (req, res) => {
   Todo.find().then((todos) => {
     res.send({todos});
@@ -36,7 +39,7 @@ app.get('/todos', (req, res) => {
   })
 });
 
-// GET /todos/132425
+// GET /todos/ by :id
 app.get('/todos/:id', (req, res) => {
   var id = req.params.id;
 
@@ -54,12 +57,13 @@ Todo.findById(id).then((todo) => {
  });
 });
 
+// DELETE todos by id
 app.delete('/todos/:id', (req, res) => {
   var id = req.params.id;
   if(!ObjectID.isValid(id)) {
     return res.status(404).send();
   }
-  Todo.findOneAndDelete(id).then((todo) => {
+  Todo.findByIdAndRemove(id).then((todo) => {
      if(!todo) {
        return res.status(404).send();
      }
@@ -69,6 +73,7 @@ app.delete('/todos/:id', (req, res) => {
   });
 });
 
+// PATCH todos update by id
 app.patch('/todos/:id', (req, res) => {
   var id = req.params.id;
   var body = _.pick(req.body, ['text', 'completed']);
@@ -95,7 +100,7 @@ app.patch('/todos/:id', (req, res) => {
   })
 });
 
-// // POST /users
+ // POST users
 app.post('/users', (req, res) => {
   var body = _.pick(req.body, ['email', 'password']);
   var user = new User(body);
@@ -110,7 +115,7 @@ app.post('/users', (req, res) => {
 });
 
 
-
+// GET users
 app.get('/users/me', authenticate, (req, res) => {
   res.send(req.user);
 });
