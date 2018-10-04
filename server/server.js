@@ -1,5 +1,4 @@
-
-// require('./config/config');
+ require('./config/config');
 
  const _ = require('lodash');
 const express = require('express');
@@ -13,7 +12,7 @@ var {authenticate} = require('./middleware/authenticate');
 
 
 var app = express();
-const port = process.env.PORT || 3000;
+const port = process.env.PORT;
 
 app.use(bodyParser.json());
 
@@ -98,7 +97,7 @@ app.patch('/todos/:id', authenticate, (req, res) => {
     body.completed = false;
     body.completedAt = null;
   }
-  
+
   Todo.findOneAndUpdate({
     _id: id,
     _creator: req.user._id
